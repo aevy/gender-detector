@@ -3,15 +3,14 @@
             [clojure.java.io :refer [reader resource]]))
 
 (defn gender-desc [s]
-  (condp = s
-    "M" :male
+  (case s
+    "M"  :male
     "?M" :mostly-male
     "1M" :mostly-male
-    "F" :female
+    "F"  :female
     "?F" :mostly-female
     "1F" :mostly-female
-    "?" :unknown
-    (throw (Exception. (str "Not sure what to do with a gender of " s)))))
+    :unknown))
 
 (defn hex->int [s]
   (Integer/parseInt s 16))
@@ -32,7 +31,7 @@
 
 (defn lines []
   (with-open [rdr (reader (resource "nam_dict.txt") :encoding "ISO-8859-1")]
-    (remove (partial re-find #"\A[#=]") (doall (line-seq rdr)))))
+    (remove #(re-find #"\A[#=]" %) (doall (line-seq rdr)))))
 
 (defonce names
   (->> (map parse-line (lines))
